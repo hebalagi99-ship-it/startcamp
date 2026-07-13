@@ -21,9 +21,28 @@
         }
         body {
             font-family: 'Noto Sans KR', sans-serif;
-            background-color: #E6E8E3; /* 빈티지 웜그레이 베이스 */
+            background-color: #E6E8E3; /* 원래의 따뜻한 빈티지 웜그레이 복구 */
             cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' style='font-size: 22px;'><text y='24'>🌱</text></svg>"), auto;
             overflow-x: hidden;
+        }
+
+        /* 전체 글씨 크기를 약 2포인트(2px)씩 키우고 줄간격을 늘려 가독성 극대화 */
+        body, p, span, div, input, textarea, select, button {
+            word-break: keep-all; /* 단어 단위 줄바꿈으로 가독성 보장 */
+        }
+        .text-[10px] { font-size: 12px !important; }
+        .text-[11px] { font-size: 13px !important; }
+        .text-xs { font-size: 14px !important; line-height: 1.5rem !important; }
+        .text-sm { font-size: 16px !important; line-height: 1.625rem !important; }
+        .text-base { font-size: 18px !important; }
+        .text-lg { font-size: 20px !important; }
+        .text-xl { font-size: 23px !important; }
+
+        /* 다정함 손글씨체 가독성 특별 보정 */
+        .font-handwriting {
+            font-size: 1.25rem !important;
+            font-weight: 500;
+            line-height: 1.35;
         }
 
         /* 버튼, 셀렉트 박스, 링크 등 상호작용 요소 위에서는 반짝이 커서로 변경 */
@@ -110,7 +129,7 @@
     <div class="w-full max-w-5xl bg-[#F0F2EE] retro-border rounded-xl p-4 md:p-6 retro-box-shadow flex flex-col md:flex-row gap-6 relative">
         
         <!-- 왼쪽: 사이드바 (프로필 및 Today 정보 고정 영역) -->
-        <aside class="w-full md:w-64 bg-white border border-[#4A6B5D] rounded-lg p-4 flex flex-col items-center justify-between gap-4 z-10">
+        <aside class="w-full md:w-64 bg-white border border-[#4A6B5D] rounded-lg p-4 flex flex-col items-center justify-between gap-4 z-10 shrink-0">
             
             <!-- 방문자 수 카운터 -->
             <div class="w-full text-center text-xs font-semibold text-gray-500 border-b border-dashed border-[#a3b19b] pb-2">
@@ -123,7 +142,7 @@
             <div class="w-full flex flex-col items-center flex-grow py-2">
                 <!-- 아바타/사진 영역 -->
                 <div class="w-40 h-40 bg-[#EAF0EC] border-2 border-[#4A6B5D] rounded-lg relative overflow-hidden flex items-center justify-center mb-4">
-                    <!-- 미니룸 아바타 캐릭터 (CSS로 그린 아기자기한 캐릭터) -->
+                    <!-- 미니룸 아바타 캐릭터 -->
                     <div class="char-bounce flex flex-col items-center">
                         <div class="w-12 h-12 bg-emerald-700 rounded-full flex items-center justify-center text-white text-lg font-bold border-2 border-white shadow">
                             🌱
@@ -136,7 +155,7 @@
                 <!-- TODAY IS... 기분 설정기 -->
                 <div class="w-full bg-[#EAF0EC] p-2 rounded border border-[#a3b19b] mb-4 text-center">
                     <p class="text-[10px] text-emerald-800 font-bold tracking-wider mb-1">TODAY IS...</p>
-                    <select id="mood-selector" class="w-full bg-white text-xs border border-[#a3b19b] rounded p-1 text-center font-semibold text-gray-700 focus:outline-none focus:ring-1 focus:ring-[#4A6B5D]">
+                    <select id="mood-selector" class="w-full bg-white text-xs border border-[#a3b19b] rounded p-1.5 text-center font-semibold text-gray-700 focus:outline-none focus:ring-1 focus:ring-[#4A6B5D]">
                         <option value="♨️ 열공">♨️ 열공 (코딩 폭주 중)</option>
                         <option value="☕ 휴식">☕ 휴식 (아지트에서 티타임)</option>
                         <option value="💡 아이디어">💡 아이디어 (영감 폭발)</option>
@@ -168,7 +187,7 @@
         </aside>
 
         <!-- 오른쪽: 메인 영역 (컨텐츠 뷰포트 + 탭 메뉴 탑재) -->
-        <main class="flex-grow flex flex-col justify-between relative bg-white border border-[#4A6B5D] rounded-lg p-4 md:p-6 min-h-[480px] perspective-container">
+        <main class="flex-grow flex flex-col justify-between relative bg-white border border-[#4A6B5D] rounded-lg p-4 md:p-6 min-h-[500px] perspective-container">
             
             <!-- (1) 상단 바: 현재 머무는 탭 제목 표시 -->
             <div class="flex items-center justify-between border-b-2 border-double border-[#4A6B5D] pb-3 mb-4">
@@ -178,12 +197,12 @@
                 <span class="text-[11px] text-gray-400 font-mono">http://cyworld.ssafy16/hobin</span>
             </div>
 
-            <!-- (2) 가변 콘텐츠 영역 (바닐라 JS가 상태에 맞게 화면을 3D 애니메이션과 함께 스위칭해 렌더링하는 영역) -->
+            <!-- (2) 가변 콘텐츠 영역 -->
             <div id="content-area" class="flex-grow overflow-y-auto pr-1">
-                <!-- 동적으로 변경될 영역입니다. 아래는 기본 'home' 렌더링 코드입니다 -->
+                <!-- 동적으로 변경될 영역입니다. (JS에 의해 렌더링) -->
             </div>
 
-            <!-- (3) 하단/오른쪽 부착형 메뉴 탭 (미니홈피 시그니처 탭 스타일) -->
+            <!-- (3) 하단/오른쪽 부착형 메뉴 탭 -->
             <div class="flex flex-wrap gap-2 mt-6 border-t border-dashed border-[#a3b19b] pt-4 justify-center md:justify-end">
                 <button onclick="switchTab('home')" id="tab-btn-home" class="tab-btn px-4 py-2 text-xs font-semibold rounded-lg border border-[#4A6B5D] bg-[#4A6B5D] text-white transition hover:scale-105">
                     🏠 홈
@@ -201,10 +220,22 @@
         </main>
     </div>
 
-    <!-- 커스텀 토스트 알림창 컨테이너 (alert() 대용) -->
+    <!-- 미니 뽀모도로 타이머 플로팅 위젯 (다른 탭에 있을 때 우측 하단 노출) -->
+    <div id="mini-timer-widget" onclick="switchTab('study')" class="fixed bottom-24 right-6 bg-[#FBFBFA] border-2 border-[#4A6B5D] rounded-xl p-3 shadow-xl retro-box-shadow z-40 hidden flex-col items-center gap-1.5 transition-all duration-300 transform translate-y-12 opacity-0 hover:scale-105 active:scale-95 cursor-pointer">
+        <div class="flex items-center gap-1 text-[11px] text-emerald-800 font-bold bg-[#EAF0EC] px-2.5 py-1 rounded-full">
+            <span>🔥</span>
+            <span>열공 중!</span>
+        </div>
+        <div id="mini-timer-display" class="text-base font-mono font-bold text-[#4A6B5D] tracking-wide">
+            00:00:00
+        </div>
+        <span class="text-[10px] text-gray-400 font-medium">클릭 시 공부방 이동</span>
+    </div>
+
+    <!-- 커스텀 토스트 알림창 컨테이너 -->
     <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2.5 pointer-events-none"></div>
 
-    <!-- 커스텀 모달 다이얼로그 (confirm() 대용) -->
+    <!-- 커스텀 모달 다이얼로그 (Confirm) -->
     <div id="custom-confirm-modal" class="fixed inset-0 bg-black/40 z-50 hidden flex items-center justify-center p-4 backdrop-blur-[2px]">
         <div class="bg-[#F0F2EE] border-4 border-[#4A6B5D] rounded-xl p-5 max-w-sm w-full shadow-2xl retro-box-shadow transform scale-95 transition-all duration-300">
             <div class="flex items-center gap-2 mb-3">
@@ -242,6 +273,7 @@
             initGuestbook();
             renderCurrentTab();
             initEventListeners();
+            checkMiniTimerVisibility();
         });
 
         // 3. 투데이 카운터 관리
@@ -373,19 +405,12 @@
             }, 200);
         }
 
-        // 7. SPA 화면 전환 (Switch Tab) 핵심 제어 함수 (3D 책장 애니메이션 포함)
+        // 7. SPA 화면 전환 (Switch Tab) 핵심 제어 함수
         function switchTab(tabId) {
             if (appState.currentTab === tabId) return;
 
-            // 타이머 실행 중 다른 탭 이동 시 커스텀 확인 모달 작동
-            if (appState.studyTimer.isRunning && tabId !== 'study') {
-                showCustomConfirm("공부방을 나가시면 집중 타이머가 일시정지됩니다. 이동할까요?", () => {
-                    toggleStudyTimer(false); // 타이머 일시중지
-                    executePageFlipTransition(tabId);
-                });
-            } else {
-                executePageFlipTransition(tabId);
-            }
+            // 타이머 구동을 백그라운드로 안전하게 이어가도록 하며 탭 전환을 부드럽게 실행합니다.
+            executePageFlipTransition(tabId);
         }
 
         // 3D 플립 애니메이션 트리거 & 콘텐츠 스위칭 실행 함수
@@ -412,6 +437,9 @@
 
                 // 콘텐츠 실제 데이터 주입 렌더링
                 renderCurrentTab();
+
+                // 미니 위젯 가시성 실시간 계산
+                checkMiniTimerVisibility();
 
                 // flip-out 제거 후 flip-in 추가해 새 책장이 덮이도록 효과 작동
                 container.classList.remove('page-flip-out');
@@ -599,7 +627,7 @@
             }
         }
 
-        // 9. 공부방 전용 뽀모도로 타이머 구동 로직
+        // 9. 공부방 전용 뽀모도로 타이머 및 플로팅 위젯 구동 로직
         function toggleStudyTimer(forceState = null) {
             const timerCtrlBtn = document.getElementById('timer-ctrl-btn');
             const targetState = (forceState !== null) ? forceState : !appState.studyTimer.isRunning;
@@ -610,9 +638,17 @@
                 
                 appState.studyTimer.intervalId = setInterval(() => {
                     appState.studyTimer.seconds++;
+                    
+                    // 메인 화면 타이머 갱신
                     const display = document.getElementById('timer-display');
                     if (display) {
                         display.textContent = formatTime(appState.studyTimer.seconds);
+                    }
+                    
+                    // 우측 하단 플로팅 위젯 타이머 실시간 동기화 갱신
+                    const miniDisplay = document.getElementById('mini-timer-display');
+                    if (miniDisplay) {
+                        miniDisplay.textContent = formatTime(appState.studyTimer.seconds);
                     }
                 }, 1000);
             } else {
@@ -621,6 +657,7 @@
                 clearInterval(appState.studyTimer.intervalId);
                 appState.studyTimer.intervalId = null;
             }
+            checkMiniTimerVisibility();
         }
 
         function resetStudyTimer() {
@@ -629,6 +666,34 @@
             const display = document.getElementById('timer-display');
             if (display) {
                 display.textContent = "00:00:00";
+            }
+            const miniDisplay = document.getElementById('mini-timer-display');
+            if (miniDisplay) {
+                miniDisplay.textContent = "00:00:00";
+            }
+        }
+
+        // 미니 타이머 팝업 위젯 노출/소멸 핸들링 함수
+        function checkMiniTimerVisibility() {
+            const widget = document.getElementById('mini-timer-widget');
+            if (!widget) return;
+
+            // 타이머가 작동 중이면서 현재 페이지가 '공부방'이 아닐 때만 팝업 위젯 노출
+            if (appState.studyTimer.isRunning && appState.currentTab !== 'study') {
+                widget.classList.remove('hidden');
+                setTimeout(() => {
+                    widget.classList.remove('opacity-0', 'translate-y-12');
+                    widget.classList.add('opacity-100', 'translate-y-0');
+                }, 10);
+            } else {
+                widget.classList.remove('opacity-100', 'translate-y-0');
+                widget.classList.add('opacity-0', 'translate-y-12');
+                setTimeout(() => {
+                    // 완전히 안 보이게 한 뒤 hidden 클래스 추가
+                    if (!appState.studyTimer.isRunning || appState.currentTab === 'study') {
+                        widget.classList.add('hidden');
+                    }
+                }, 300);
             }
         }
 
@@ -650,9 +715,9 @@
             }
 
             listContainer.innerHTML = [...appState.guestbookEntries].reverse().map(entry => `
-                <div class="bg-[#FBFBFA] border border-[#EAF0EC] rounded-lg p-3 text-xs shadow-sm hover:shadow transition relative group">
+                <div class="bg-[#FBFBFA] border border-[#EAF0EC] rounded-lg p-3.5 text-xs shadow-sm hover:shadow transition relative group">
                     <div class="flex items-center justify-between mb-1.5 border-b border-gray-100 pb-1">
-                        <span class="font-bold text-gray-800 flex items-center gap-1.5">
+                        <span class="font-bold text-gray-800 flex items-center gap-1.5 text-sm">
                             <span>${entry.emoji || '🍀'}</span> ${escapeHtml(entry.writer)}
                         </span>
                         <div class="flex items-center gap-2">
@@ -662,7 +727,7 @@
                             </button>
                         </div>
                     </div>
-                    <p class="text-gray-600 leading-relaxed break-all whitespace-pre-line">${escapeHtml(entry.content)}</p>
+                    <p class="text-gray-600 leading-relaxed font-handwriting text-lg break-all whitespace-pre-line">${escapeHtml(entry.content)}</p>
                 </div>
             `).join('');
         }
