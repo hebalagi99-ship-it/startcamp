@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>코딩은 뜨겁게, 대화는 아늑하게 :: SSAFY 16기 권호빈의 미니룸</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: 나눔손글씨 펜 & 감자꽃 (Cozy & Retro Fonts) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* 글로벌 감성 폰트 적용 */
+        .font-cozy {
+            font-family: 'Gamja Flower', cursive;
+        }
+        .font-handwriting {
+            font-family: 'Nanum Pen Script', cursive;
+        }
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #E6E8E3; /* 빈티지 웜그레이 베이스 */
+        }
+
+        /* 싸이월드 특유의 도트/격자 패턴 배경 효과 */
+        .retro-pattern {
+            background-image: radial-gradient(#ced2c9 1px, transparent 1px);
+            background-size: 12px 12px;
+        }
+
+        /* 입체감 있는 레트로 테두리 스타일 */
+        .retro-border {
+            border: 4px double #4A6B5D; /* 빈티지 그린 더블 보더 */
+        }
+        .retro-box-shadow {
+            box-shadow: 6px 6px 0px rgba(74, 107, 93, 0.2);
+        }
+
+        /* 커스텀 스크롤바 */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #a3b19b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4A6B5D;
+        }
+
+        /* 미니룸 도트 캐릭터 애니메이션 */
+        @keyframes bounce-gentle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+        .char-bounce {
+            animation: bounce-gentle 2s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="retro-pattern min-h-screen flex items-center justify-center p-4 md:p-8 select-none">
+
+    <!-- 미니홈피 전체 메인 컨테이너 -->
+    <div class="w-full max-w-5xl bg-[#F0F2EE] retro-border rounded-xl p-4 md:p-6 retro-box-shadow flex flex-col md:flex-row gap-6 relative">
+        
+        <!-- 왼쪽: 사이드바 (프로필 및 Today 정보 고정 영역) -->
+        <aside class="w-full md:w-64 bg-white border border-[#4A6B5D] rounded-lg p-4 flex flex-col items-center justify-between gap-4">
+            
+            <!-- 방문자 수 카운터 -->
+            <div class="w-full text-center text-xs font-semibold text-gray-500 border-b border-dashed border-[#a3b19b] pb-2">
+                <span class="text-red-500">TODAY <span id="today-count">12</span></span>
+                <span class="mx-2">|</span>
+                <span>TOTAL <span id="total-count">2416</span></span>
+            </div>
+
+            <!-- 프로필 카드 몸체 -->
+            <div class="w-full flex flex-col items-center flex-grow py-2">
+                <!-- 아바타/사진 영역 -->
+                <div class="w-40 h-40 bg-[#EAF0EC] border-2 border-[#4A6B5D] rounded-lg relative overflow-hidden flex items-center justify-center mb-4">
+                    <!-- 미니룸 아바타 캐릭터 (CSS로 그린 아기자기한 캐릭터) -->
+                    <div class="char-bounce flex flex-col items-center">
+                        <div class="w-12 h-12 bg-emerald-700 rounded-full flex items-center justify-center text-white text-lg font-bold border-2 border-white shadow">
+                            🌱
+                        </div>
+                        <div class="w-14 h-8 bg-emerald-800 rounded-b-xl border-x-2 border-b-2 border-white mt-[-4px]"></div>
+                        <span class="text-[10px] mt-1 bg-white px-1.5 py-0.5 rounded-full border border-emerald-800 text-emerald-800 font-semibold shadow-sm">SSAFY 16기</span>
+                    </div>
+                </div>
+
+                <!-- TODAY IS... 기분 설정기 -->
+                <div class="w-full bg-[#EAF0EC] p-2 rounded border border-[#a3b19b] mb-4 text-center">
+                    <p class="text-[10px] text-emerald-800 font-bold tracking-wider mb-1">TODAY IS...</p>
+                    <select id="mood-selector" class="w-full bg-white text-xs border border-[#a3b19b] rounded p-1 text-center font-semibold text-gray-700 focus:outline-none focus:ring-1 focus:ring-[#4A6B5D]">
+                        <option value="♨️ 열공">♨️ 열공 (코딩 폭주 중)</option>
+                        <option value="☕ 휴식">☕ 휴식 (아지트에서 티타임)</option>
+                        <option value="💡 아이디어">💡 아이디어 (영감 폭발)</option>
+                        <option value="💤 밤샘">💤 밤샘 (눈꺼풀과의 싸움)</option>
+                        <option value="🥳 행코">🥳 행코 (행복 코딩 완료)</option>
+                    </select>
+                </div>
+
+                <!-- 간단 소개 문구 -->
+                <div class="w-full text-center px-2">
+                    <h2 class="font-bold text-[#4A6B5D] text-lg mb-1 font-cozy">SSAFY 16기 권호빈</h2>
+                    <p class="text-xs text-gray-600 font-handwriting text-base leading-snug">
+                        "코딩할 땐 뜨거운 열정으로,<br>
+                        이야기 나눌 땐 아늑한 쉼표처럼."
+                    </p>
+                </div>
+            </div>
+
+            <!-- 일촌 파도타기 링크 (이동 시 재미 요소를 주는 알림창 기능 탑재) -->
+            <div class="w-full mt-auto">
+                <select id="wave-selector" class="w-full bg-[#4A6B5D] text-white text-xs rounded p-2 font-medium focus:outline-none hover:bg-emerald-800 cursor-pointer transition">
+                    <option value="" disabled selected>▶ 일촌 파도타기 이동</option>
+                    <option value="서울 1반 김싸피">서울 1반 김싸피 미니룸</option>
+                    <option value="대전 3반 이싸피">대전 3반 이싸피 미니룸</option>
+                    <option value="구미 2반 박싸피">구미 2반 박싸피 미니룸</option>
+                    <option value="광주 4반 최싸피">광주 4반 최싸피 미니룸</option>
+                </select>
+            </div>
+        </aside>
+
+        <!-- 오른쪽: 메인 영역 (컨텐츠 뷰포트 + 탭 메뉴 탑재) -->
+        <main class="flex-grow flex flex-col justify-between relative bg-white border border-[#4A6B5D] rounded-lg p-4 md:p-6 min-h-[480px]">
+            
+            <!-- (1) 상단 바: 현재 머무는 탭 제목 표시 -->
+            <div class="flex items-center justify-between border-b-2 border-double border-[#4A6B5D] pb-3 mb-4">
+                <h1 id="tab-title" class="text-xl font-bold text-[#4A6B5D] font-cozy flex items-center gap-2">
+                    🏠 권호빈의 미니룸에 오신 것을 환영합니다!
+                </h1>
+                <span class="text-[11px] text-gray-400 font-mono">http://cyworld.ssafy16/hobin</span>
+            </div>
+
+            <!-- (2) 가변 콘텐츠 영역 (바닐라 JS가 상태에 맞게 화면을 스위칭해 렌더링하는 영역) -->
+            <div id="content-area" class="flex-grow overflow-y-auto pr-1">
+                <!-- 동적으로 변경될 영역입니다. 아래는 기본 'home' 렌더링 코드입니다 -->
+            </div>
+
+            <!-- (3) 하단/오른쪽 부착형 메뉴 탭 (미니홈피 시그니처 탭 스타일) -->
+            <div class="flex flex-wrap gap-2 mt-6 border-t border-dashed border-[#a3b19b] pt-4 justify-center md:justify-end">
+                <button onclick="switchTab('home')" id="tab-btn-home" class="tab-btn px-4 py-2 text-xs font-semibold rounded-lg border border-[#4A6B5D] bg-[#4A6B5D] text-white transition hover:scale-105">
+                    🏠 홈
+                </button>
+                <button onclick="switchTab('profile')" id="tab-btn-profile" class="tab-btn px-4 py-2 text-xs font-semibold rounded-lg border border-[#a3b19b] bg-[#EAF0EC] text-gray-700 transition hover:scale-105 hover:bg-[#c9d6ca]">
+                    👤 프로필
+                </button>
+                <button onclick="switchTab('study')" id="tab-btn-study" class="tab-btn px-4 py-2 text-xs font-semibold rounded-lg border border-[#a3b19b] bg-[#EAF0EC] text-gray-700 transition hover:scale-105 hover:bg-[#c9d6ca]">
+                    ✏️ 공부방
+                </button>
+                <button onclick="switchTab('guestbook')" id="tab-btn-guestbook" class="tab-btn px-4 py-2 text-xs font-semibold rounded-lg border border-[#a3b19b] bg-[#EAF0EC] text-gray-700 transition hover:scale-105 hover:bg-[#c9d6ca]">
+                    📖 방명록
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <!-- 바닐라 자바스크립트 엔진 -->
+    <script>
+        // 1. 애플리케이션 상태 (State) 정의
+        const appState = {
+            currentTab: 'home',
+            todayCount: 0,
+            totalCount: 0,
+            mood: '♨️ 열공',
+            studyTimer: {
+                seconds: 0,
+                intervalId: null,
+                isRunning: false
+            },
+            guestbookEntries: []
+        };
+
+        // 2. 초기화 및 로컬스토리지 복구 데이터 로드
+        window.addEventListener('DOMContentLoaded', () => {
+            initVisitCounter();
+            initMood();
+            initGuestbook();
+            renderCurrentTab();
+            initEventListeners();
+        });
+
+        // 3. 투데이 카운터 관리
+        function initVisitCounter() {
+            // 로컬스토리지를 활용해 가짜가 아닌 실제 동작하는 방문 카운트 구현
+            let total = parseInt(localStorage.getItem('miniroom_total') || '1540');
+            let today = parseInt(localStorage.getItem('miniroom_today') || '0');
+            const lastVisitDate = localStorage.getItem('miniroom_last_visit');
+            const todayStr = new Date().toDateString();
+
+            if (lastVisitDate !== todayStr) {
+                today = 1;
+                total += 1;
+                localStorage.setItem('miniroom_last_visit', todayStr);
+            } else {
+                today += 1;
+                total += 1;
+            }
+
+            localStorage.setItem('miniroom_today', today);
+            localStorage.setItem('miniroom_total', total);
+
+            appState.todayCount = today;
+            appState.totalCount = total;
+
+            document.getElementById('today-count').textContent = today;
+            document.getElementById('total-count').textContent = total;
+        }
+
+        // 4. 투데이 기분(Today is...) 연동 및 바인딩
+        function initMood() {
+            const savedMood = localStorage.getItem('miniroom_mood') || '♨️ 열공';
+            appState.mood = savedMood;
+            
+            const moodSelector = document.getElementById('mood-selector');
+            moodSelector.value = savedMood;
+
+            moodSelector.addEventListener('change', (e) => {
+                const newMood = e.target.value;
+                appState.mood = newMood;
+                localStorage.setItem('miniroom_mood', newMood);
+                alert(`기분이 [${newMood}] 상태로 변경되었습니다! 🎵`);
+            });
+        }
+
+        // 5. 방명록 초기화 (더미데이터 생성 및 저장소 연동)
+        function initGuestbook() {
+            const savedData = localStorage.getItem('miniroom_guestbook');
+            if (savedData) {
+                appState.guestbookEntries = JSON.parse(savedData);
+            } else {
+                // 첫 방문 시 아늑한 분위기의 기본 방명록 리스트 제공
+                appState.guestbookEntries = [
+                    {
+                        id: 1,
+                        writer: "김싸피 (서울 1반)",
+                        content: "야! 미니룸 너무 아늑하고 예쁘게 잘 꾸몄다 ㅎㅎ 나 일촌 평 남기고 갈게! 코딩하다 힘들면 1층 휴게실에서 커피 한잔 고?",
+                        date: "2026. 07. 10. 14:32",
+                        emoji: "☕"
+                    },
+                    {
+                        id: 2,
+                        writer: "박코딩 (대전 3반)",
+                        content: "공부방 타이머 켜놓고 열공하는 모습 자극받고 갑니다.. 저도 오늘 밤샘 달립니다! 🔥",
+                        date: "2026. 07. 10. 15:45",
+                        emoji: "🔥"
+                    }
+                ];
+                localStorage.setItem('miniroom_guestbook', JSON.stringify(appState.guestbookEntries));
+            }
+        }
+
+        // 6. 이벤트 리스너 통합 관리
+        function initEventListeners() {
+            // 일촌 파도타기 셀렉터 이벤트
+            const waveSelector = document.getElementById('wave-selector');
+            waveSelector.addEventListener('change', (e) => {
+                const targetFriend = e.target.value;
+                if (targetFriend) {
+                    alert(`🏄‍♂️ 파도를 타고 [${targetFriend}]님의 미니룸으로 이동합니다! (가상 이동 완료)`);
+                    waveSelector.selectedIndex = 0; // 선택 초기화
+                }
+            });
+        }
+
+        // 7. SPA 화면 전환 (Switch Tab) 핵심 제어 함수
+        function switchTab(tabId) {
+            // 타이머 실행 중 다른 탭 이동 시 경고 및 리소스 해제 예방 (타이머는 백그라운드 유지 혹은 정지)
+            if (appState.studyTimer.isRunning && tabId !== 'study') {
+                const leave = confirm("공부방을 나가시면 집중 타이머가 일시정지됩니다. 이동할까요?");
+                if (!leave) return;
+                toggleStudyTimer(false); // 타이머 일시중지
+            }
+
+            appState.currentTab = tabId;
+            
+            // 탭 버튼 스타일 업데이트
+            const allTabs = ['home', 'profile', 'study', 'guestbook'];
+            allTabs.forEach(t => {
+                const btn = document.getElementById(`tab-btn-${t}`);
+                if (t === tabId) {
+                    btn.className = "tab-btn px-4 py-2 text-xs font-semibold rounded-lg border border-[#4A6B5D] bg-[#4A6B5D] text-white transition hover:scale-105";
+                } else {
+                    btn.className = "tab-btn px-4 py-2 text-xs font-semibold rounded-lg border border-[#a3b19b] bg-[#EAF0EC] text-gray-700 transition hover:scale-105 hover:bg-[#c9d6ca]";
+                }
+            });
+
+            // 헤더 타이틀 및 콘텐츠 렌더링
+            renderCurrentTab();
+        }
+
+        // 8. 현재 활성화된 탭 내용 렌더링 (View Switcher)
+        function renderCurrentTab() {
+            const container = document.getElementById('content-area');
+            const titleElement = document.getElementById('tab-title');
+
+            if (appState.currentTab === 'home') {
+                titleElement.innerHTML = `🏠 권호빈의 미니룸에 오신 것을 환영합니다!`;
+                container.innerHTML = `
+                    <div class="flex flex-col gap-5">
+                        <!-- 미니룸 비주얼 룸 박스 -->
+                        <div class="w-full bg-[#EAF0EC] border-2 border-dashed border-[#4A6B5D] rounded-xl p-6 relative flex flex-col items-center justify-center min-h-[220px]">
+                            <!-- 아늑한 다락방 일러스트 느낌의 그래픽 스페이스 -->
+                            <div class="absolute top-4 left-4 text-xs font-bold text-[#4A6B5D] bg-white px-2 py-1 rounded border border-[#4A6B5D] shadow-sm">
+                                🛋️ 호빈's Cozy Attic Room
+                            </div>
+                            
+                            <div class="flex flex-col items-center mt-6">
+                                <div class="text-4xl mb-4">💤 💻 ☕ 🪴</div>
+                                <p class="text-sm font-semibold text-[#4A6B5D] text-center font-cozy text-lg">
+                                    "코딩은 뜨겁게, 대화는 아늑하게."
+                                </p>
+                                <p class="text-xs text-gray-500 mt-2 text-center max-w-sm">
+                                    여기는 SSAFY 16기 동기들을 위한 작고 편안한 쉼터입니다. 프로필을 둘러보고, 방명록에 따뜻한 흔적 한 줄을 편하게 남겨보세요!
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- 최근 업데이트 내역 피드 -->
+                        <div>
+                            <h3 class="text-sm font-bold text-[#4A6B5D] mb-3 flex items-center gap-1 border-b pb-1 border-[#EAF0EC]">
+                                <span class="text-base">📢</span> 최근 소식 & 알림
+                            </h3>
+                            <ul class="text-xs space-y-2 text-gray-600">
+                                <li class="flex items-center justify-between p-2 hover:bg-[#F0F2EE] rounded">
+                                    <span>🔥 <strong class="text-gray-800">공부방</strong>에 뽀모도로 열공 집중 타이머가 설치되었습니다!</span>
+                                    <span class="text-gray-400">TODAY</span>
+                                </li>
+                                <li class="flex items-center justify-between p-2 hover:bg-[#F0F2EE] rounded">
+                                    <span>💌 <strong class="text-gray-800">방명록</strong>에 일촌들의 따뜻한 롤링페이퍼 공간 활성화</span>
+                                    <span class="text-gray-400">1day ago</span>
+                                </li>
+                                <li class="flex items-center justify-between p-2 hover:bg-[#F0F2EE] rounded">
+                                    <span>🌱 SSAFY 16기 미니홈피 프로젝트 기획 및 디자인 세팅 완료</span>
+                                    <span class="text-gray-400">3days ago</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                `;
+            } 
+            else if (appState.currentTab === 'profile') {
+                titleElement.innerHTML = `👤 권호빈의 일촌용 프로필 탐구`;
+                container.innerHTML = `
+                    <div class="space-y-6">
+                        <div class="bg-[#EAF0EC] p-4 rounded-lg border-l-4 border-[#4A6B5D]">
+                            <p class="text-xs text-emerald-800 font-bold mb-1">INTRODUCE ME</p>
+                            <h2 class="text-lg font-bold text-gray-800 font-cozy">"언제나 배우는 것을 사랑하며, 동기들과 소통할 때 활력을 얻는 사람"</h2>
+                            <p class="text-xs text-gray-600 mt-2 leading-relaxed">
+                                안녕하세요! SSAFY 16기에서 멋진 동기들과 함께 동반 성장을 꿈꾸는 권호빈입니다. 
+                                배울 때는 밤새도록 깊이 파고드는 집요함이 있고, 팀 활동을 하거나 쉬는 시간엔 누구보다도 
+                                다정하고 쾌활한 대화 상대가 되어 드릴 준비가 되어 있습니다.
+                            </p>
+                        </div>
+
+                        <!-- 3대 매력 포인트 카드 리스트 -->
+                        <div>
+                            <h3 class="text-xs font-bold text-[#4A6B5D] uppercase tracking-wider mb-3">My Key Strengths (나의 삼색 매력)</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <!-- 카드 1 -->
+                                <div class="bg-white border border-[#a3b19b] p-3 rounded-lg shadow-sm hover:shadow-md transition">
+                                    <div class="text-2xl mb-1">🔥</div>
+                                    <h4 class="text-xs font-bold text-gray-800 mb-1">밤샘 코딩 몰입력</h4>
+                                    <p class="text-[11px] text-gray-500 leading-relaxed">에러와 코드 개선점을 발견하면 시간이 멈춘 듯 몰두하며 끝까지 해결해 냅니다.</p>
+                                </div>
+                                <!-- 카드 2 -->
+                                <div class="bg-white border border-[#a3b19b] p-3 rounded-lg shadow-sm hover:shadow-md transition">
+                                    <div class="text-2xl mb-1">👂</div>
+                                    <h4 class="text-xs font-bold text-gray-800 mb-1">일촌 경청 다이어리</h4>
+                                    <p class="text-[11px] text-gray-500 leading-relaxed">동기들의 고충, 사소한 일상의 대화를 깊이 공감하고 정성 들여 귀 기울여 듣습니다.</p>
+                                </div>
+                                <!-- 카드 3 -->
+                                <div class="bg-white border border-[#a3b19b] p-3 rounded-lg shadow-sm hover:shadow-md transition">
+                                    <div class="text-2xl mb-1">🤝</div>
+                                    <h4 class="text-xs font-bold text-gray-800 mb-1">5분 완성 친화력</h4>
+                                    <p class="text-[11px] text-gray-500 leading-relaxed">서먹한 분위기를 부드럽게 깨부수며, 누구와도 금방 편안한 친구가 되는 소통의 달인!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } 
+            else if (appState.currentTab === 'study') {
+                titleElement.innerHTML = `✏️ 권호빈의 뜨거운 열공 공부방`;
+                container.innerHTML = `
+                    <div class="space-y-6">
+                        <!-- 집중 뽀모도로 타이머 인터랙티브 위젯 -->
+                        <div class="bg-[#F9FAF8] border-2 border-double border-[#a3b19b] rounded-xl p-5 text-center shadow-inner relative overflow-hidden">
+                            <span class="absolute top-2 right-3 text-[10px] text-emerald-800 font-bold bg-[#EAF0EC] px-2 py-0.5 rounded-full">STUDY TIMER</span>
+                            <h3 class="text-xs font-bold text-gray-500 mb-2">🔥 동기들과 함께 달리는 집중의 시간!</h3>
+                            
+                            <!-- 스톱워치 시각 디스플레이 -->
+                            <div id="timer-display" class="text-4xl font-mono font-bold text-[#4A6B5D] my-4 tracking-wider">
+                                ${formatTime(appState.studyTimer.seconds)}
+                            </div>
+
+                            <!-- 제어 버튼부 -->
+                            <div class="flex justify-center gap-3">
+                                <button id="timer-ctrl-btn" onclick="toggleStudyTimer()" class="px-4 py-1.5 text-xs font-semibold rounded bg-[#4A6B5D] text-white hover:bg-emerald-800 transition">
+                                    ${appState.studyTimer.isRunning ? '일시정지' : '집중 시작'}
+                                </button>
+                                <button onclick="resetStudyTimer()" class="px-4 py-1.5 text-xs font-semibold rounded bg-gray-200 text-gray-700 hover:bg-gray-300 transition">
+                                    리셋
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 실시간 공부 로그 리스트 -->
+                        <div>
+                            <h3 class="text-xs font-bold text-[#4A6B5D] uppercase tracking-wider mb-3">최근 학습 발자취</h3>
+                            <div class="space-y-3">
+                                <div class="bg-white border border-[#EAF0EC] p-3 rounded-lg flex justify-between items-center text-xs">
+                                    <div>
+                                        <span class="bg-[#4A6B5D] text-white text-[10px] font-bold px-1.5 py-0.5 rounded mr-2">JS</span>
+                                        <span class="font-semibold text-gray-700">바닐라 JS 싱글 페이지 라우팅 원리 파헤치기</span>
+                                    </div>
+                                    <span class="text-gray-400 font-mono">2026. 07. 10</span>
+                                </div>
+                                <div class="bg-white border border-[#EAF0EC] p-3 rounded-lg flex justify-between items-center text-xs">
+                                    <div>
+                                        <span class="bg-amber-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded mr-2">CSS</span>
+                                        <span class="font-semibold text-gray-700">Tailwind Utility Class를 이용한 레트로 UI 고도화</span>
+                                    </div>
+                                    <span class="text-gray-400 font-mono">2026. 07. 09</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } 
+            else if (appState.currentTab === 'guestbook') {
+                titleElement.innerHTML = `📖 동기들의 소중한 한마디 (방명록)`;
+                container.innerHTML = `
+                    <div class="space-y-5">
+                        <!-- 방명록 입력 Form -->
+                        <form id="guestbook-form" onsubmit="addGuestbookEntry(event)" class="bg-[#EAF0EC] p-4 rounded-lg border border-[#a3b19b] space-y-3">
+                            <div class="flex flex-wrap gap-3 items-center">
+                                <input type="text" id="writer-input" required placeholder="작성자 이름 (예: 서울 2반 홍길동)" class="bg-white text-xs border border-[#a3b19b] rounded p-2 flex-grow focus:outline-none focus:ring-1 focus:ring-[#4A6B5D]" />
+                                
+                                <select id="emoji-input" class="bg-white text-xs border border-[#a3b19b] rounded p-2 focus:outline-none focus:ring-1 focus:ring-[#4A6B5D]">
+                                    <option value="🍀">🍀 행운</option>
+                                    <option value="🔥">🔥 열정</option>
+                                    <option value="☕">☕ 커피</option>
+                                    <option value="💻">💻 코딩</option>
+                                    <option value="✨">✨ 응원</option>
+                                </select>
+                            </div>
+                            <textarea id="content-input" required rows="2" placeholder="일촌 평이나 남기고 싶은 다정한 한마디를 적어주세요!" class="w-full bg-white text-xs border border-[#a3b19b] rounded p-2 focus:outline-none focus:ring-1 focus:ring-[#4A6B5D] resize-none"></textarea>
+                            <div class="flex justify-end">
+                                <button type="submit" class="bg-[#4A6B5D] text-white text-xs font-bold px-4 py-2 rounded hover:bg-emerald-800 transition">
+                                    등록하기 ✍️
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- 방명록 목록 피드 -->
+                        <div id="guestbook-list" class="space-y-4 max-h-[260px] overflow-y-auto pr-1">
+                            <!-- 로컬스토리지 연동하여 렌더링 -->
+                        </div>
+                    </div>
+                `;
+                // 방명록 리스트 개별 렌더링 트리거
+                renderGuestbookList();
+            }
+        }
+
+        // 9. 공부방 전용 뽀모도로 타이머 구동 로직
+        function toggleStudyTimer(forceState = null) {
+            const timerCtrlBtn = document.getElementById('timer-ctrl-btn');
+            const targetState = (forceState !== null) ? forceState : !appState.studyTimer.isRunning;
+
+            if (targetState) {
+                // 타이머 가동
+                appState.studyTimer.isRunning = true;
+                if (timerCtrlBtn) timerCtrlBtn.textContent = '일시정지';
+                
+                appState.studyTimer.intervalId = setInterval(() => {
+                    appState.studyTimer.seconds++;
+                    const display = document.getElementById('timer-display');
+                    if (display) {
+                        display.textContent = formatTime(appState.studyTimer.seconds);
+                    }
+                }, 1000);
+            } else {
+                // 타이머 정지
+                appState.studyTimer.isRunning = false;
+                if (timerCtrlBtn) timerCtrlBtn.textContent = '집중 시작';
+                clearInterval(appState.studyTimer.intervalId);
+                appState.studyTimer.intervalId = null;
+            }
+        }
+
+        function resetStudyTimer() {
+            toggleStudyTimer(false);
+            appState.studyTimer.seconds = 0;
+            const display = document.getElementById('timer-display');
+            if (display) {
+                display.textContent = "00:00:00";
+            }
+        }
+
+        function formatTime(totalSeconds) {
+            const hrs = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+            const mins = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+            const secs = String(totalSeconds % 60).padStart(2, '0');
+            return `${hrs}:${mins}:${secs}`;
+        }
+
+        // 10. 방명록 쓰기 및 렌더링 로직
+        function renderGuestbookList() {
+            const listContainer = document.getElementById('guestbook-list');
+            if (!listContainer) return;
+
+            if (appState.guestbookEntries.length === 0) {
+                listContainer.innerHTML = `<p class="text-center text-xs text-gray-400 py-6">아직 등록된 흔적이 없습니다. 첫 흔적을 남겨보세요! 🪴</p>`;
+                return;
+            }
+
+            // 역순(최신 글이 위로) 정렬하여 표시
+            listContainer.innerHTML = [...appState.guestbookEntries].reverse().map(entry => `
+                <div class="bg-[#FBFBFA] border border-[#EAF0EC] rounded-lg p-3 text-xs shadow-sm hover:shadow transition relative group">
+                    <div class="flex items-center justify-between mb-1.5 border-b border-gray-100 pb-1">
+                        <span class="font-bold text-gray-800 flex items-center gap-1.5">
+                            <span>${entry.emoji || '🍀'}</span> ${escapeHtml(entry.writer)}
+                        </span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-gray-400 font-mono text-[10px]">${entry.date}</span>
+                            <button onclick="deleteGuestbookEntry(${entry.id})" class="text-red-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition font-bold" title="삭제">
+                                ✕
+                            </button>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 leading-relaxed break-all whitespace-pre-line">${escapeHtml(entry.content)}</p>
+                </div>
+            `).join('');
+        }
+
+        function addGuestbookEntry(event) {
+            event.preventDefault();
+            const writerInput = document.getElementById('writer-input');
+            const emojiInput = document.getElementById('emoji-input');
+            const contentInput = document.getElementById('content-input');
+
+            if (!writerInput.value.trim() || !contentInput.value.trim()) return;
+
+            const now = new Date();
+            const formattedDate = `${now.getFullYear()}. ${String(now.getMonth() + 1).padStart(2, '0')}. ${String(now.getDate()).padStart(2, '0')}. ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+            const newEntry = {
+                id: Date.now(),
+                writer: writerInput.value.trim(),
+                content: contentInput.value.trim(),
+                emoji: emojiInput.value,
+                date: formattedDate
+            };
+
+            appState.guestbookEntries.push(newEntry);
+            localStorage.setItem('miniroom_guestbook', JSON.stringify(appState.guestbookEntries));
+
+            // 인풋 리셋 및 리렌더링
+            writerInput.value = '';
+            contentInput.value = '';
+            
+            renderGuestbookList();
+            alert("따뜻한 방명록 한마디가 등록되었습니다! ✨");
+        }
+
+        function deleteGuestbookEntry(id) {
+            const confirmed = confirm("방명록 한마디를 삭제하시겠습니까?");
+            if (!confirmed) return;
+
+            appState.guestbookEntries = appState.guestbookEntries.filter(entry => entry.id !== id);
+            localStorage.setItem('miniroom_guestbook', JSON.stringify(appState.guestbookEntries));
+            renderGuestbookList();
+        }
+
+        // HTML 이스케이프 유틸리티 함수 (보안 강화)
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+        }
+    </script>
+</body>
+</html>
