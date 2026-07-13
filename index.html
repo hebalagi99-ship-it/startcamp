@@ -23,6 +23,7 @@
             font-family: 'Noto Sans KR', sans-serif;
             background-color: #E6E8E3; /* 빈티지 웜그레이 베이스 */
             cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' style='font-size: 22px;'><text y='24'>🌱</text></svg>"), auto;
+            overflow-x: hidden;
         }
 
         /* 버튼, 셀렉트 박스, 링크 등 상호작용 요소 위에서는 반짝이 커서로 변경 */
@@ -68,6 +69,39 @@
         .char-bounce {
             animation: bounce-gentle 2s ease-in-out infinite;
         }
+
+        /* 3D 책장 넘김 효과 스타일 설정 */
+        .perspective-container {
+            perspective: 1500px; /* 3D 공간의 깊이감을 설정 */
+        }
+
+        #content-area {
+            transform-origin: left center; /* 책 제본 부근(왼쪽)을 기준으로 회전 */
+            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.4s ease;
+            backface-visibility: hidden; /* 뒤집힐 때 뒷면을 숨김 */
+        }
+
+        /* 책장이 왼쪽으로 넘어가며 뒤집어지는 상태 */
+        .page-flip-out {
+            transform: rotateY(-95deg) scale(0.95);
+            opacity: 0;
+        }
+
+        /* 책장이 오른쪽(뒷면)에서 부드럽게 새로 덮이는 애니메이션 */
+        .page-flip-in {
+            animation: flipInEffect 0.45s forwards cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        @keyframes flipInEffect {
+            from {
+                transform: rotateY(95deg) scale(0.95);
+                opacity: 0;
+            }
+            to {
+                transform: rotateY(0deg) scale(1);
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 <body class="retro-pattern min-h-screen flex items-center justify-center p-4 md:p-8 select-none">
@@ -76,7 +110,7 @@
     <div class="w-full max-w-5xl bg-[#F0F2EE] retro-border rounded-xl p-4 md:p-6 retro-box-shadow flex flex-col md:flex-row gap-6 relative">
         
         <!-- 왼쪽: 사이드바 (프로필 및 Today 정보 고정 영역) -->
-        <aside class="w-full md:w-64 bg-white border border-[#4A6B5D] rounded-lg p-4 flex flex-col items-center justify-between gap-4">
+        <aside class="w-full md:w-64 bg-white border border-[#4A6B5D] rounded-lg p-4 flex flex-col items-center justify-between gap-4 z-10">
             
             <!-- 방문자 수 카운터 -->
             <div class="w-full text-center text-xs font-semibold text-gray-500 border-b border-dashed border-[#a3b19b] pb-2">
@@ -121,7 +155,7 @@
                 </div>
             </div>
 
-            <!-- 일촌 파도타기 링크 (이동 시 재미 요소를 주는 알림창 기능 탑재) -->
+            <!-- 일촌 파도타기 링크 -->
             <div class="w-full mt-auto">
                 <select id="wave-selector" class="w-full bg-[#4A6B5D] text-white text-xs rounded p-2 font-medium focus:outline-none hover:bg-emerald-800 cursor-pointer transition">
                     <option value="" disabled selected>▶ 일촌 파도타기 이동</option>
@@ -134,7 +168,7 @@
         </aside>
 
         <!-- 오른쪽: 메인 영역 (컨텐츠 뷰포트 + 탭 메뉴 탑재) -->
-        <main class="flex-grow flex flex-col justify-between relative bg-white border border-[#4A6B5D] rounded-lg p-4 md:p-6 min-h-[480px]">
+        <main class="flex-grow flex flex-col justify-between relative bg-white border border-[#4A6B5D] rounded-lg p-4 md:p-6 min-h-[480px] perspective-container">
             
             <!-- (1) 상단 바: 현재 머무는 탭 제목 표시 -->
             <div class="flex items-center justify-between border-b-2 border-double border-[#4A6B5D] pb-3 mb-4">
@@ -144,7 +178,7 @@
                 <span class="text-[11px] text-gray-400 font-mono">http://cyworld.ssafy16/hobin</span>
             </div>
 
-            <!-- (2) 가변 콘텐츠 영역 (바닐라 JS가 상태에 맞게 화면을 스위칭해 렌더링하는 영역) -->
+            <!-- (2) 가변 콘텐츠 영역 (바닐라 JS가 상태에 맞게 화면을 3D 애니메이션과 함께 스위칭해 렌더링하는 영역) -->
             <div id="content-area" class="flex-grow overflow-y-auto pr-1">
                 <!-- 동적으로 변경될 영역입니다. 아래는 기본 'home' 렌더링 코드입니다 -->
             </div>
@@ -165,6 +199,24 @@
                 </button>
             </div>
         </main>
+    </div>
+
+    <!-- 커스텀 토스트 알림창 컨테이너 (alert() 대용) -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2.5 pointer-events-none"></div>
+
+    <!-- 커스텀 모달 다이얼로그 (confirm() 대용) -->
+    <div id="custom-confirm-modal" class="fixed inset-0 bg-black/40 z-50 hidden flex items-center justify-center p-4 backdrop-blur-[2px]">
+        <div class="bg-[#F0F2EE] border-4 border-[#4A6B5D] rounded-xl p-5 max-w-sm w-full shadow-2xl retro-box-shadow transform scale-95 transition-all duration-300">
+            <div class="flex items-center gap-2 mb-3">
+                <span class="text-xl">🪴</span>
+                <h3 class="font-bold text-[#4A6B5D] font-cozy text-lg">알림</h3>
+            </div>
+            <p id="confirm-message" class="text-sm text-gray-700 leading-relaxed mb-5 font-medium"></p>
+            <div class="flex justify-end gap-2">
+                <button id="confirm-btn-cancel" onclick="closeCustomConfirm(false)" class="px-4 py-1.5 text-xs font-semibold rounded bg-gray-200 text-gray-700 hover:bg-gray-300 transition">취소</button>
+                <button id="confirm-btn-ok" onclick="closeCustomConfirm(true)" class="px-4 py-1.5 text-xs font-semibold rounded bg-[#4A6B5D] text-white hover:bg-emerald-800 transition">확인</button>
+            </div>
+        </div>
     </div>
 
     <!-- 바닐라 자바스크립트 엔진 -->
@@ -194,7 +246,6 @@
 
         // 3. 투데이 카운터 관리
         function initVisitCounter() {
-            // 로컬스토리지를 활용해 가짜가 아닌 실제 동작하는 방문 카운트 구현
             let total = parseInt(localStorage.getItem('miniroom_total') || '1540');
             let today = parseInt(localStorage.getItem('miniroom_today') || '0');
             const lastVisitDate = localStorage.getItem('miniroom_last_visit');
@@ -231,7 +282,7 @@
                 const newMood = e.target.value;
                 appState.mood = newMood;
                 localStorage.setItem('miniroom_mood', newMood);
-                alert(`기분이 [${newMood}] 상태로 변경되었습니다! 🎵`);
+                showToast(`기분이 [${newMood}] 상태로 변경되었습니다! 🍀`);
             });
         }
 
@@ -241,7 +292,6 @@
             if (savedData) {
                 appState.guestbookEntries = JSON.parse(savedData);
             } else {
-                // 첫 방문 시 아늑한 분위기의 기본 방명록 리스트 제공
                 appState.guestbookEntries = [
                     {
                         id: 1,
@@ -264,41 +314,115 @@
 
         // 6. 이벤트 리스너 통합 관리
         function initEventListeners() {
-            // 일촌 파도타기 셀렉터 이벤트
             const waveSelector = document.getElementById('wave-selector');
             waveSelector.addEventListener('change', (e) => {
                 const targetFriend = e.target.value;
                 if (targetFriend) {
-                    alert(`🏄‍♂️ 파도를 타고 [${targetFriend}]님의 미니룸으로 이동합니다! (가상 이동 완료)`);
+                    showToast(`🏄‍♂️ 파도를 타고 [${targetFriend}]님의 미니룸으로 이동합니다! (가상 이동 완료)`);
                     waveSelector.selectedIndex = 0; // 선택 초기화
                 }
             });
         }
 
-        // 7. SPA 화면 전환 (Switch Tab) 핵심 제어 함수
-        function switchTab(tabId) {
-            // 타이머 실행 중 다른 탭 이동 시 경고 및 리소스 해제 예방 (타이머는 백그라운드 유지 혹은 정지)
-            if (appState.studyTimer.isRunning && tabId !== 'study') {
-                const leave = confirm("공부방을 나가시면 집중 타이머가 일시정지됩니다. 이동할까요?");
-                if (!leave) return;
-                toggleStudyTimer(false); // 타이머 일시중지
-            }
-
-            appState.currentTab = tabId;
+        // --- 커스텀 대화창 및 알림 시스템 로직 ---
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = "bg-emerald-800 text-white text-xs font-semibold px-4 py-3 rounded-lg shadow-lg border border-emerald-600 transition-all duration-300 transform translate-y-4 opacity-0 flex items-center gap-2 font-cozy text-sm pointer-events-auto";
+            toast.innerHTML = `<span>✨</span> <span>${message}</span>`;
             
-            // 탭 버튼 스타일 업데이트
-            const allTabs = ['home', 'profile', 'study', 'guestbook'];
-            allTabs.forEach(t => {
-                const btn = document.getElementById(`tab-btn-${t}`);
-                if (t === tabId) {
-                    btn.className = "tab-btn px-4 py-2 text-xs font-semibold rounded-lg border border-[#4A6B5D] bg-[#4A6B5D] text-white transition hover:scale-105";
-                } else {
-                    btn.className = "tab-btn px-4 py-2 text-xs font-semibold rounded-lg border border-[#a3b19b] bg-[#EAF0EC] text-gray-700 transition hover:scale-105 hover:bg-[#c9d6ca]";
-                }
-            });
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.remove('translate-y-4', 'opacity-0');
+            }, 10);
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-4', 'opacity-0');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 3000);
+        }
 
-            // 헤더 타이틀 및 콘텐츠 렌더링
-            renderCurrentTab();
+        let activeConfirmCallback = null;
+        function showCustomConfirm(message, onConfirm) {
+            const modal = document.getElementById('custom-confirm-modal');
+            const messageEl = document.getElementById('confirm-message');
+            messageEl.textContent = message;
+            activeConfirmCallback = onConfirm;
+            
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.firstElementChild.classList.remove('scale-95');
+                modal.firstElementChild.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeCustomConfirm(confirmed) {
+            const modal = document.getElementById('custom-confirm-modal');
+            modal.firstElementChild.classList.add('scale-95');
+            modal.firstElementChild.classList.remove('scale-100');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                if (confirmed && activeConfirmCallback) {
+                    activeConfirmCallback();
+                }
+                activeConfirmCallback = null;
+            }, 200);
+        }
+
+        // 7. SPA 화면 전환 (Switch Tab) 핵심 제어 함수 (3D 책장 애니메이션 포함)
+        function switchTab(tabId) {
+            if (appState.currentTab === tabId) return;
+
+            // 타이머 실행 중 다른 탭 이동 시 커스텀 확인 모달 작동
+            if (appState.studyTimer.isRunning && tabId !== 'study') {
+                showCustomConfirm("공부방을 나가시면 집중 타이머가 일시정지됩니다. 이동할까요?", () => {
+                    toggleStudyTimer(false); // 타이머 일시중지
+                    executePageFlipTransition(tabId);
+                });
+            } else {
+                executePageFlipTransition(tabId);
+            }
+        }
+
+        // 3D 플립 애니메이션 트리거 & 콘텐츠 스위칭 실행 함수
+        function executePageFlipTransition(tabId) {
+            const container = document.getElementById('content-area');
+            
+            // 1단계: 기존 페이지가 뒤집혀 넘어가는 애니메이션 클래스 부여
+            container.classList.add('page-flip-out');
+
+            // 2단계: 애니메이션(400ms)이 끝나는 타이밍에 컨텐츠를 변경하고 다시 앞으로 덮이도록 회전
+            setTimeout(() => {
+                appState.currentTab = tabId;
+                
+                // 탭 버튼 스타일 실시간 변경 업데이트
+                const allTabs = ['home', 'profile', 'study', 'guestbook'];
+                allTabs.forEach(t => {
+                    const btn = document.getElementById(`tab-btn-${t}`);
+                    if (t === tabId) {
+                        btn.className = "tab-btn px-4 py-2 text-xs font-semibold rounded-lg border border-[#4A6B5D] bg-[#4A6B5D] text-white transition hover:scale-105";
+                    } else {
+                        btn.className = "tab-btn px-4 py-2 text-xs font-semibold rounded-lg border border-[#a3b19b] bg-[#EAF0EC] text-gray-700 transition hover:scale-105 hover:bg-[#c9d6ca]";
+                    }
+                });
+
+                // 콘텐츠 실제 데이터 주입 렌더링
+                renderCurrentTab();
+
+                // flip-out 제거 후 flip-in 추가해 새 책장이 덮이도록 효과 작동
+                container.classList.remove('page-flip-out');
+                container.classList.add('page-flip-in');
+
+                // 3단계: flip-in 상태가 종료되면 관련 임시 클래스를 정리
+                setTimeout(() => {
+                    container.classList.remove('page-flip-in');
+                }, 450);
+
+            }, 350); // page-flip-out 트랜지션 속도와 밀접하게 연동
         }
 
         // 8. 현재 활성화된 탭 내용 렌더링 (View Switcher)
@@ -471,7 +595,6 @@
                         </div>
                     </div>
                 `;
-                // 방명록 리스트 개별 렌더링 트리거
                 renderGuestbookList();
             }
         }
@@ -482,7 +605,6 @@
             const targetState = (forceState !== null) ? forceState : !appState.studyTimer.isRunning;
 
             if (targetState) {
-                // 타이머 가동
                 appState.studyTimer.isRunning = true;
                 if (timerCtrlBtn) timerCtrlBtn.textContent = '일시정지';
                 
@@ -494,7 +616,6 @@
                     }
                 }, 1000);
             } else {
-                // 타이머 정지
                 appState.studyTimer.isRunning = false;
                 if (timerCtrlBtn) timerCtrlBtn.textContent = '집중 시작';
                 clearInterval(appState.studyTimer.intervalId);
@@ -528,7 +649,6 @@
                 return;
             }
 
-            // 역순(최신 글이 위로) 정렬하여 표시
             listContainer.innerHTML = [...appState.guestbookEntries].reverse().map(entry => `
                 <div class="bg-[#FBFBFA] border border-[#EAF0EC] rounded-lg p-3 text-xs shadow-sm hover:shadow transition relative group">
                     <div class="flex items-center justify-between mb-1.5 border-b border-gray-100 pb-1">
@@ -569,21 +689,20 @@
             appState.guestbookEntries.push(newEntry);
             localStorage.setItem('miniroom_guestbook', JSON.stringify(appState.guestbookEntries));
 
-            // 인풋 리셋 및 리렌더링
             writerInput.value = '';
             contentInput.value = '';
             
             renderGuestbookList();
-            alert("따뜻한 방명록 한마디가 등록되었습니다! ✨");
+            showToast("따뜻한 방명록 한마디가 등록되었습니다! ✨");
         }
 
         function deleteGuestbookEntry(id) {
-            const confirmed = confirm("방명록 한마디를 삭제하시겠습니까?");
-            if (!confirmed) return;
-
-            appState.guestbookEntries = appState.guestbookEntries.filter(entry => entry.id !== id);
-            localStorage.setItem('miniroom_guestbook', JSON.stringify(appState.guestbookEntries));
-            renderGuestbookList();
+            showCustomConfirm("방명록 한마디를 정말로 삭제하시겠습니까? 📝", () => {
+                appState.guestbookEntries = appState.guestbookEntries.filter(entry => entry.id !== id);
+                localStorage.setItem('miniroom_guestbook', JSON.stringify(appState.guestbookEntries));
+                renderGuestbookList();
+                showToast("방명록이 정상적으로 삭제되었습니다! 🍃");
+            });
         }
 
         // HTML 이스케이프 유틸리티 함수 (보안 강화)
