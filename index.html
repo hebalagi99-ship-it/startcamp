@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>코딩은 뜨겁게, 대화는 아늑하게 ::: SSAFY 16기 권호빈의 미니룸</title>
+    <title>코딩은 뜨겁게, 대화는 아늑하게 :: SSAFY 16기 권호빈의 미니룸</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: 나눔손글씨 펜 & 감자꽃 (Cozy & Retro Fonts) -->
@@ -22,6 +22,12 @@
         body {
             font-family: 'Noto Sans KR', sans-serif;
             background-color: #E6E8E3; /* 빈티지 웜그레이 베이스 */
+            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' style='font-size: 22px;'><text y='24'>🌱</text></svg>"), auto;
+        }
+
+        /* 버튼, 셀렉트 박스, 링크 등 상호작용 요소 위에서는 반짝이 커서로 변경 */
+        button, select, input, textarea, a, [onclick] {
+            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' style='font-size: 22px;'><text y='24'>✨</text></svg>"), pointer !important;
         }
 
         /* 싸이월드 특유의 도트/격자 패턴 배경 효과 */
